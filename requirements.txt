@@ -1,5 +1,1 @@
-streamlit
-psycopg2
-pandas
-matplotlib
-plotly
+
