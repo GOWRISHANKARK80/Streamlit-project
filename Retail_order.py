@@ -53,7 +53,7 @@ query_options = [
     "Average profit per category",
     "Top 3 cities by revenue",
     "Products with no profit",
-    "Top 10 countries with high sales by segment"
+    "Top 3 countries with high sales by segment"
 ]
 selected_query = st.selectbox("Select a query to visualize:", query_options)
 
@@ -97,11 +97,9 @@ queries = {
         'SELECT o."city", SUM(d."list price" * d."quantity") AS revenue FROM df1_order o JOIN df1_orders d ON o."sub category" = d."sub category" GROUP BY o."city" ORDER BY revenue DESC LIMIT 3;',
     "Products with no profit": 
         'SELECT "product id" FROM df1_orders GROUP BY "product id" HAVING SUM("profit") = 0;',
-    "Top 10 countries with high sales by segment": 
-        'SELECT "country", "segment", SUM("sales price") AS high_sales FROM df1_order o JOIN df1_orders d ON o."sub category" = d."sub category" GROUP BY o."country", o."segment" ORDER BY high_sales DESC LIMIT 10;'
+    "Top 3 countries with high sales by segment": 
+        'SELECT "country", "segment", SUM("sales price") AS high_sales FROM df1_order o JOIN df1_orders d ON o."sub category" = d."sub category" GROUP BY o."country", o."segment" ORDER BY high_sales DESC LIMIT 3;'
 }
-  
-
 # Execute selected query
 if selected_query:
     query = queries[selected_query]
@@ -159,7 +157,7 @@ if selected_query:
         result_df = run_query(queries[selected_query])
         if result_df is not None:
             plt.figure(figsize=(10, 6))
-            plt.bar(result_df["category"], result_df["total_profit"], color='cyan')
+            plt.bar(result_df["category"], result_df["total_profit"], color='violet')
             plt.title("Total Profit Per Category")
             plt.xlabel("Category")
             plt.ylabel("Total Profit")
@@ -266,7 +264,7 @@ if selected_query:
             plt.title("Profit Margin Per City")
             plt.xlabel("City")
             plt.ylabel("Total Profit")
-            plt.xticks(rotation=45)
+            plt.xticks(rotation=90)
             st.pyplot(plt)
 
     elif selected_query == "Average profit per category":
@@ -299,12 +297,12 @@ if selected_query:
         else:
             st.write("All products are generating profit.")
 
-    elif selected_query == "Top 10 countries with high sales by segment":
+    elif selected_query == "Top 3 countries with high sales by segment":
         result_df = run_query(queries[selected_query])
         if result_df is not None:
             plt.figure(figsize=(10, 6))
             plt.bar(result_df["country"], result_df["high_sales"], color='orange')
-            plt.title("Top 10 Countries with High Sales by Segment")
+            plt.title("Top 3 Countries with High Sales by Segment")
             plt.xlabel("Country")
             plt.ylabel("High Sales")
             plt.xticks(rotation=45)
@@ -312,8 +310,6 @@ if selected_query:
     else:
         st.warning("No data available for this query.")
 
-
 st.text("Thank you for using the dashboard!")
-
 
 
